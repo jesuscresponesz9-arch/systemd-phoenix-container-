@@ -300,7 +300,6 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 ---
 
 ## 👤 Autor
+**Jesus Crespo**  
 
-**Tu Nombre**  
-*SysAdmin Linux | Infraestructura Resiliente*
 
