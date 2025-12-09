@@ -1,0 +1,40 @@
+[Unit]
+Description=Phoenix Self-Healing Container
+# Asegura que la red esté levantada antes de iniciar el contenedor
+After=network-online.target
+
+[Container]
+# Apunta a la imagen OCI que construiste previamente
+Image=localhost/phoenix-app:latest
+ContainerName=phoenix-service
+
+# Comunicación vital con Systemd
+# 'Notify=yes' permite que el contenedor envíe el Heartbeat (WATCHDOG=1)
+Notify=yes
+
+# RESILIENCIA (El núcleo del Fénix)
+Restart=always
+RestartSec=1s
+
+# EL WATCHDOG: Matará el proceso si deja de latir por 10 segundos.
+WatchdogSec=10s
+
+# SEGURIDAD (Hardening)
+# Ejecutar la aplicación de forma inmutable
+ReadOnly=true
+# Previene la escalada de privilegios
+NoNewPrivileges=true
+# Elimina casi todos los permisos de kernel por defecto
+DropCapability=ALL
+
+# Montaje Temporal (Necesario para el crash test y logs)
+# El 'Z' ajusta los permisos SELinux si están habilitados
+Volume=/tmp:/tmp:Z
+
+# LÍMITES DE RECURSOS (Cgroups)
+MemoryMax=50M
+CPUQuota=10%
+
+[Install]
+# El servicio debe ser iniciado cuando el usuario inicie sesión
+WantedBy=default.target
