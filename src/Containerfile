@@ -1,0 +1,24 @@
+# 1. Base mínima y ligera
+FROM python:3.11-slim
+
+# 2. Configuración de variables de entorno (Opcional, pero bueno para logs)
+ENV PYTHONUNBUFFERED=1
+
+# 3. Directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# 4. Copiar los archivos de la aplicación
+# El contexto de construcción es './src', por lo que busca app.py aquí.
+COPY app.py .
+
+# 5. Crear el usuario de mínima confianza 'phoenix'
+# La bandera -m crea el directorio home del usuario.
+RUN useradd -m phoenix
+
+# 6. Cambiar al usuario sin privilegios
+# Esta es una medida de seguridad crítica (Hardening).
+USER phoenix
+
+# 7. Definir el comando de ejecución predeterminado (PID 1)
+# Usamos -u para que Python no haga buffering de la salida (importante para logs en tiempo real).
+CMD ["python", "-u", "app.py"]
